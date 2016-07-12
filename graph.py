@@ -23,7 +23,10 @@ class Graph(object):
 	__repr__ = __str__
 
 	#O(1)
-	def add_edge(self, e):
+	def add_edge(self, u, v):
+
+		e = Edge(u,v)
+
 		if e in self.E():
 			return
 
@@ -31,14 +34,13 @@ class Graph(object):
 		self.m += 1
 
 	#O(E)
-	def remove_edge(self, e):
-		(u,v) = e
+	def remove_edge(self, u, v):
+		e = Edge(u,v)
 
-		if (u,v) not in self.E() and (v,u) not in self.E():
+		if e not in self.E():
 			return
 
-		self.E().discard((u,v))
-		self.E().discard((v,u))
+		self.E().discard(e)
 		self.m -= 1
 
     #O(1)
@@ -57,15 +59,12 @@ class Graph(object):
 		self.V().discard(v)
 		self.n -= 1
 
-		E = self.E().copy()
-
-		for (x,y) in E:
-			if x == v or y == v:
-				self.remove_edge((x,y))
+		for u in self.N(v):
+			self.remove_edge(u,v)
 
 	#O(n^2)
 	def adjacent(self, u, v):
-		return (u,v) in self.E() or (v,u) in self.E()
+		return Edge(u,v) in self.E()
 	
 	#O(n)
 	def is_vertex(self, v):
@@ -76,20 +75,21 @@ class Graph(object):
 	# G X V -> V
 	#O(n^2)
 	def N(self, v):
-
-		S = { y for (x,y) in self.E() if x == v}.union( x for (x,y) in self.E() if y == v)
-
+		S = { y for (x,y) in self.E() if v == x } | { x for (x,y) in self.E() if v == y}
 		return Set(S)
 
 	#Closed Neighbourhood of v
 	def CN(self, v):
-		return self.N(v).union({v})
+		S = self.N(v)
+		S.add(v)
+		return S
 
 class Edge(object):
 
 	def __init__(self, u, v):
 		self.u = u
 		self.v = v
+
 
 	def __eq__(self, other):
 		if not isinstance( other, self.__class__ ):
@@ -100,9 +100,17 @@ class Edge(object):
 	def __ne__(self, other):
 		return not self.__eq__(other)
 
+
+	def __hash__(self):
+		return hash(self.u) + hash(self.v)
+
 	def __str__(self):
 		return "(" + str(self.u) + "," + str(self.v) + ")"
 
 	__repr__ = __str__
+
+	def __iter__(self):
+		yield self.u
+		yield self.v
 
 

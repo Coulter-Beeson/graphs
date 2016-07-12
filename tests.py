@@ -1,6 +1,6 @@
 import unittest
 
-from graph import Graph
+from graph import Graph, Edge
 from adjacency_matrix import AdjacencyMatrix 
 from sets import Set
 
@@ -20,8 +20,12 @@ class TestGraphBaseMethods(unittest.TestCase):
 		#
 
 		V = Set( { 'a', 'b', 'c', 'd', 'e' } )
-		E = Set( { ('a', 'b'), ('a', 'c'), ('b', 'd'), ('c', 'd'), ('d', 'e') } )
-		
+		E_pairs = Set( { ('a', 'b'), ('a', 'c'), ('b', 'd'), ('c', 'd'), ('d', 'e') } )
+		E = Set()
+
+		for (u,v) in E_pairs:
+			E.add(Edge(u,v))
+
 		self.G = self.give_graph( V, E )
 
 		self.V = V.copy()
@@ -47,9 +51,9 @@ class TestGraphBaseMethods(unittest.TestCase):
 		self.assertEqual( self.G.E(), self.E )
 		self.assertEqual( self.G.m, self.m )
 
-		self.G.add_edge( ('d','a') )
+		self.G.add_edge( 'd','a' )
 
-		self.assertEqual( self.G.E(), self.E.union( { ('d','a') } ) )
+		self.assertEqual( self.G.E(), self.E.union( { Edge('d','a') } ) )
 		self.assertEqual( self.G.m, self.m + 1 )
 
 	def test_remove_edge_forward(self):
@@ -57,8 +61,8 @@ class TestGraphBaseMethods(unittest.TestCase):
 		self.assertEqual( self.G.E(), self.E )
 		self.assertEqual( self.G.m, self.m )
 
-		self.G.remove_edge( ('a','b') )
-		self.E.remove( ('a','b') )
+		self.G.remove_edge( 'a','b' )
+		self.E.remove( Edge('a','b') )
 
 
 		self.assertEqual( self.G.E(), self.E )
@@ -70,8 +74,8 @@ class TestGraphBaseMethods(unittest.TestCase):
 		self.assertEqual( self.G.E(), self.E )
 		self.assertEqual( self.G.m, self.m )
 
-		self.G.remove_edge( ('b','a') )
-		self.E.remove( ('a','b') )
+		self.G.remove_edge('b','a')
+		self.E.remove( Edge('a','b') )
 
 		self.assertEqual( self.G.E(), self.E )
 		self.assertEqual( self.G.m, self.m - 1 )
@@ -80,8 +84,8 @@ class TestGraphBaseMethods(unittest.TestCase):
 
 		self.G.remove_vertex( 'a' )
 		self.V.remove( 'a' )
-		self.E.remove( ('a', 'b') )
-		self.E.remove( ('a', 'c') )
+		self.E.remove( Edge('a', 'b') )
+		self.E.remove( Edge('a', 'c') )
 
 		self.assertEqual( self.G.V(), self.V )
 		self.assertEqual( self.G.n, self.n - 1 )
@@ -93,10 +97,14 @@ class TestGraphBaseMethods(unittest.TestCase):
 		self.G.remove_vertex( 'd' )
 
 		self.V.remove( 'd' )
-		S = Set( { ('b', 'd'), ('c', 'd'), ('d', 'e') } )
+		S_points = Set( { ('b', 'd'), ('c', 'd'), ('d', 'e') } )
+		S = Set()
+
+		for (u,v) in S_points:
+			S.add(Edge(u,v))
+
 		self.E = self.E - S
-
-
+		
 		self.assertEqual( self.G.V(), self.V )
 		self.assertEqual( self.G.n, self.n - 1 )
 		self.assertEqual( self.G.E(), self.E )

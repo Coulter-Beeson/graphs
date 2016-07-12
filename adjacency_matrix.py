@@ -1,4 +1,4 @@
-from graph import Graph
+from graph import Graph, Edge
 from sets import Set
 
 class AdjacencyMatrix(Graph):
@@ -14,8 +14,8 @@ class AdjacencyMatrix(Graph):
 		for v in V:
 			self.add_vertex(v)
 
-		for e in E:
-			self.add_edge(e)
+		for (u,v) in E:
+			self.add_edge(u,v)
 
 
 	#O(n)
@@ -26,7 +26,7 @@ class AdjacencyMatrix(Graph):
 	#TODO: prune reversed elements?
 	def E(self):
 
-		S = { (self.IVM[i], self.IVM[j]) 
+		S = { Edge(self.IVM[i], self.IVM[j]) 
 			for i in range(self.n) 
 			for j in range(self.n)
 			if i < j
@@ -74,25 +74,40 @@ class AdjacencyMatrix(Graph):
 			return (self.M[i] >> j ) % 2
 
 				
-	#O(1) If v is not in V and n < 64
+	#O(1) 
 	def add_vertex(self, v):
 
-		#
-		#TODO: Adjust resizing to accomidate graphs for |G| > 64
-		#
+		if v in self.VM:
+			return
 
 		self.VM[v] = self.n
 		self.IVM[self.n] = v
-		self.M += [0]			#O(1) 	\\If n < w*k for some constant k
-								#		\\currently stuck to less than 64
+		self.M += [0]			
 		self.n += 1
+
+
+	#TODO: fix this so that VM and IVM point to the right places
+	def remove_vertex(self, v):
+
+		if v not in self.VM:
+			return
+
+		i = self.VM[v]
+
+		for u in self.N(v):
+			self.remove_edge(u,v)
+
+		del self.VM[v]
+		del self.IVM[i]
+		del self.M[i]
+
+		self.n -= 1
+
 
 
 	#O(1) if e is an edge
 	#crashes if e is not an edge
-	def add_edge(self, e):
-
-		(u,v) = e
+	def add_edge(self, u, v):
 
 		if self.adjacent(u,v):
 			return	False
@@ -109,8 +124,7 @@ class AdjacencyMatrix(Graph):
 
 
 	#O(1) if e is in E
-	def remove_edge(self, e):
-		(u,v) = e
+	def remove_edge(self, u, v):
 
 		if not self.adjacent(u,v):
 			return
@@ -120,6 +134,8 @@ class AdjacencyMatrix(Graph):
 
 		self.M[i] -= 1 << j
 		self.M[j] -= 1 << i
+
+		self.m -= 1
 
 	#O(1) if (u,v) is in E
 	def adjacent(self, u, v):
