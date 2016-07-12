@@ -1,5 +1,6 @@
 from sets import Set
 
+
 class Graph(object):
 
 	#O(V) + O(E) storage
@@ -83,5 +84,25 @@ class Graph(object):
 	#Closed Neighbourhood of v
 	def CN(self, v):
 		return self.N(v).union({v})
+
+class Edge(object):
+
+	def __init__(self, u, v):
+		self.u = u
+		self.v = v
+
+	def __eq__(self, other):
+		if not isinstance( other, self.__class__ ):
+			return False
+
+		return ( (self.u == other.u and self.v == other.v) or (self.v == other.u and self.u == other.v) )
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+	def __str__(self):
+		return "(" + str(self.u) + "," + str(self.v) + ")"
+
+	__repr__ = __str__
 
 

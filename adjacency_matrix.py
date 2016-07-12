@@ -20,7 +20,7 @@ class AdjacencyMatrix(Graph):
 
 	#O(n)
 	def V(self):
-		return {v for v in self.VM}
+		return Set({v for v in self.VM})
 
 	#O(n^2)
 	#TODO: prune reversed elements?
@@ -32,7 +32,7 @@ class AdjacencyMatrix(Graph):
 			if i < j
 			and (self.M[i] >> j) % 2 }
 
-		return S
+		return Set(S)
 
 
 	#TODO: Abstract the iteration for matrix numpy?
