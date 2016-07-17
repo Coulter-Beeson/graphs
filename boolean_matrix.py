@@ -4,12 +4,12 @@ import numpy as np
 #Square Matrix over the field GF(2)
 class BooleanMatrix(object):
 
-
+	#O(n)
 	def __init__(self, n):
 		self.M = [0]*n
 		self.n = n
 
-
+	#O(n^2)
 	def __str__(self):
 
 		S = ""
@@ -29,6 +29,7 @@ class BooleanMatrix(object):
 
 	__repr__ = __str__
 
+	#self[i,j] in O(1) self[i] in O(n)
 	#TODO: fix set, del, slices, and exceptions
 	def __getitem__(self, key):
 
@@ -47,6 +48,7 @@ class BooleanMatrix(object):
 					v[j] = 1
 
 			return v			
+
 
 	#Given a Matrix B B[i] = val for Val Bool[], or B[i.j] = val 
 	def __setitem__(self, key, val):
@@ -69,10 +71,11 @@ class BooleanMatrix(object):
 			self.M[key] = x
 
 
-
+	#O(1)
 	def toggle(self, i, j):
 		self.M[i] = self.M[i] ^ 2**j
 
+	#O(n^2)
 	# Given a matrix M, returns the minor Mi,i for an index i
 	# Does not modify M
 	def minor(self, r):
@@ -97,12 +100,14 @@ class BooleanMatrix(object):
 			
 			
 		return B
-
+	#O(1)
 	def inc(self, i = 1):
 		self.M += [0]*i
+		self.n += 1
 
 
 	# complements of the Graph G
+	#O(n)
 	def complement(self):
 		self.M =[ ~self.M[i] & (2**self.n - 1) for i in range(self.n) ]
 

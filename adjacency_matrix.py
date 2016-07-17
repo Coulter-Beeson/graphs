@@ -6,7 +6,7 @@ class AdjacencyMatrix(Graph):
 
 	#O(|V| + |E|) = O(n + m)
 	def __init__(self, V = Set(), E = Set()):
-		self.Matrix = BooleanMatrix(len(V))  
+		self.Matrix = BooleanMatrix(0)  
 		self.VM = {}
 		self.IVM = {}
 		self.n = 0
