@@ -1,11 +1,12 @@
 from graph import Graph, Edge
 from sets import Set
+from boolean_matrix import BooleanMatrix
 
 class AdjacencyMatrix(Graph):
 
 	#O(|V| + |E|) = O(n + m)
 	def __init__(self, V = Set(), E = Set()):
-		self.M = []
+		self.Matrix = BooleanMatrix(len(V))  
 		self.VM = {}
 		self.IVM = {}
 		self.n = 0
@@ -23,56 +24,20 @@ class AdjacencyMatrix(Graph):
 		return Set({v for v in self.VM})
 
 	#O(n^2)
-	#TODO: prune reversed elements?
 	def E(self):
 
 		S = { Edge(self.IVM[i], self.IVM[j]) 
 			for i in range(self.n) 
 			for j in range(self.n)
 			if i < j
-			and (self.M[i] >> j) % 2 }
+			and self.Matrix[i,j] }
 
 		return Set(S)
 
 
 	#TODO: Abstract the iteration for matrix numpy?
-	def M(self, i ,j):
-
-		if i is None and j is None:
-
-			L = []
-
-			for i in range(self.n):
-				row = []
-				x = self.M[i]
-				for j in range(self.n):
-					if x % 2 == 1:
-						row += [1]
-					else:
-						row += [0]
-					x = x >> 1
-				L.append(row)
-		
-			return L
-
-		if j is None:
-
-			row = []
-	
-			for i in range(self.n):
-				for j in range(self.n):
-					if x % 2 == 1:
-						row += [1]
-					else:
-						row += [0]
-					x = x >> 1
-
-			return row
-
-		else:
-			
-			return (self.M[i] >> j ) % 2
-
+	def M(self):
+		return self.Matrix
 				
 	#O(1) 
 	def add_vertex(self, v):
@@ -82,7 +47,7 @@ class AdjacencyMatrix(Graph):
 
 		self.VM[v] = self.n
 		self.IVM[self.n] = v
-		self.M += [0]			
+		self.Matrix.inc()			
 		self.n += 1
 
 
@@ -97,9 +62,15 @@ class AdjacencyMatrix(Graph):
 		for u in self.N(v):
 			self.remove_edge(u,v)
 
+		P = [ (j,self.IVM[j]) for j in range(i + 1, self.n)  ]
+
+		for (j,k) in P:
+			self.VM[k] = j - 1
+			self.IVM[j-1] = k
+
 		del self.VM[v]
-		del self.IVM[i]
-		del self.M[i]
+		del self.IVM[self.n - 1]
+		self.Matrix = self.Matrix.minor(i)
 
 		self.n -= 1
 
@@ -115,8 +86,8 @@ class AdjacencyMatrix(Graph):
 		i = self.VM[u]
 		j = self.VM[v]
 
-		self.M[i] += 1 << j
-		self.M[j] += 1 << i
+		self.Matrix[i,j] = 1
+		self.Matrix[j,i] = 1
 
 		self.m += 1
 
@@ -132,8 +103,8 @@ class AdjacencyMatrix(Graph):
 		i = self.VM[u]
 		j = self.VM[v]
 
-		self.M[i] -= 1 << j
-		self.M[j] -= 1 << i
+		self.Matrix[i,j] = 0 
+		self.Matrix[j,i] = 0 
 
 		self.m -= 1
 
@@ -142,7 +113,7 @@ class AdjacencyMatrix(Graph):
 		i = self.VM[u]
 		j = self.VM[v]
 
-		return (self.M[i] >> j) % 2 == 1
+		return self.Matrix[i,j]
 
 	#O(n)
 	#Open Neighbourhood of v
@@ -150,13 +121,12 @@ class AdjacencyMatrix(Graph):
 		S = Set()
 
 		i = self.VM[v]			
-		x = self.M[i]
+		v_i = self.Matrix[i]
 
 
-		for k in range(self.n):
-			if x % 2 == 1:
+		for k,v in enumerate(v_i):
+			if v:
 				S.add( self.IVM[k] )
-			x = x >> 1
 
 		return S
 
