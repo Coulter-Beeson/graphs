@@ -56,11 +56,12 @@ class Graph(object):
 		if v not in self.V():
 			return
 
+		for u in self.N(v):
+			self.remove_edge(u,v)
+
 		self.V().discard(v)
 		self.n -= 1
 
-		for u in self.N(v):
-			self.remove_edge(u,v)
 
 	#O(n^2)
 	def adjacent(self, u, v):
@@ -86,9 +87,10 @@ class Graph(object):
 
 class Edge(object):
 
-	def __init__(self, u, v):
+	def __init__(self, u, v, data = None):
 		self.u = u
 		self.v = v
+		self.data = data
 
 
 	def __eq__(self, other):
@@ -112,5 +114,11 @@ class Edge(object):
 	def __iter__(self):
 		yield self.u
 		yield self.v
+
+	def get_val(self):
+		return self.data
+
+	def set_val(self, val):
+		self.data = val
 
 
