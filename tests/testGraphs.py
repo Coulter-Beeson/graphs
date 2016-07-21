@@ -1,13 +1,28 @@
 import unittest
 
-from graph import Graph, Edge
-from adjacency_matrix import AdjacencyMatrix 
+from project.graphs.graph import Graph, Edge
+from project.graphs.adjacency_matrix import AdjacencyMatrix 
 from sets import Set
 
-class TestGraphBaseMethods(unittest.TestCase):
 
+
+def test_vertices():
+	return  Set( { 'a', 'b', 'c', 'd', 'e' } )
+
+def test_edges():
+	E_pairs = Set( { ('a', 'b'), ('a', 'c'), ('b', 'd'), ('c', 'd'), ('d', 'e') } )
+	E = Set()
+
+	for (u,v) in E_pairs:
+		E.add(Edge(u,v))
+
+	return E
+
+class TestGraph(unittest.TestCase):
+
+	
 	def give_graph(self, V, E):
-		return Graph( V, E )
+		return Graph(V,E)
 
 	def setUp(self):
 		#			 b
@@ -18,15 +33,11 @@ class TestGraphBaseMethods(unittest.TestCase):
 		#			\ /
 		#			 c
 		#
+		
+		V = test_vertices()
+		E = test_edges()
 
-		V = Set( { 'a', 'b', 'c', 'd', 'e' } )
-		E_pairs = Set( { ('a', 'b'), ('a', 'c'), ('b', 'd'), ('c', 'd'), ('d', 'e') } )
-		E = Set()
-
-		for (u,v) in E_pairs:
-			E.add(Edge(u,v))
-
-		self.G = self.give_graph( V, E )
+		self.G = self.give_graph(V,E)
 
 		self.V = V.copy()
 		self.E = E.copy()
@@ -147,7 +158,7 @@ class TestGraphBaseMethods(unittest.TestCase):
 		self.assertEqual( N_e, Set( { 'd' , 'e' } ) )	
 
 
-class TestAdjacencyMatrixBaseMethods(TestGraphBaseMethods):
+class TestAdjacencyMatrixBaseMethods(TestGraph):
 
 	def give_graph(self, V, E):
 		return AdjacencyMatrix(V,E)

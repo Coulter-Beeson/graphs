@@ -5,17 +5,17 @@ from boolean_matrix import BooleanMatrix
 class AdjacencyMatrix(Graph):
 
 	#O(|V| + |E|) = O(n + m)
-	def __init__(self, V = Set(), E = Set()):
+	def __init__(self, Verts = Set(), Edges = Set()):
 		self.Matrix = BooleanMatrix(0)  
 		self.VM = {}
 		self.IVM = {}
 		self.n = 0
 		self.m = 0
 
-		for v in V:
+		for v in Verts:
 			self.add_vertex(v)
 
-		for (u,v) in E:
+		for (u,v) in Edges:
 			self.add_edge(u,v)
 
 
@@ -29,8 +29,7 @@ class AdjacencyMatrix(Graph):
 		S = { Edge(self.IVM[i], self.IVM[j]) 
 			for i in range(self.n) 
 			for j in range(self.n)
-			if i < j
-			and self.Matrix[i,j] }
+			if self.Matrix[i,j] }
 
 		return Set(S)
 

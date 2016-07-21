@@ -4,15 +4,28 @@ from sets import Set
 class Graph(object):
 
 	#O(V) + O(E) storage
-	def __init__(self, V = Set(), E = Set()):		
-		self.vert_set = V
-		self.n = 0
+	def __init__(self, Verts = Set(), Edges = Set()):		
+		self.vert_set = Verts
+		self.n = len(self.vert_set)
 
-		self.edge_set = E
-		self.m = 0
+		self.edge_set = Edges
+		self.m = len(self.edge_set)
+
+	def __eq__(self, other):
+		if not isinstance( other, Graph):
+			return False
+
+		return ( self.V() == other.V() and self.E() == other.E() )
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
+
+
+	def __hash__(self):
+		return hash(self.V()) + hash(self.E())
 
 	def V(self):
-		return self.vert_set
+		 return self.vert_set
 
 	def E(self):
 		return self.edge_set
@@ -21,6 +34,11 @@ class Graph(object):
 		return "< " + str(self.V()) + " , " + str(self.E()) + " >"
 
 	__repr__ = __str__
+
+	# (V,E) = G unpacks G as two sets
+	def __iter__(self):
+		yield self.vert_set
+		yield self.edge_set
 
 	#O(1)
 	def add_edge(self, u, v):
@@ -120,5 +138,4 @@ class Edge(object):
 
 	def set_val(self, val):
 		self.data = val
-
 
