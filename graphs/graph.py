@@ -5,10 +5,10 @@ class Graph(object):
 
 	#O(V) + O(E) storage
 	def __init__(self, Verts = Set(), Edges = Set()):		
-		self.vert_set = Verts
+		self.vert_set = Set(Verts)
 		self.n = len(self.vert_set)
 
-		self.edge_set = Edges
+		self.edge_set = Set(Edges)
 		self.m = len(self.edge_set)
 
 	def __eq__(self, other):
@@ -24,8 +24,52 @@ class Graph(object):
 	def __hash__(self):
 		return hash(self.V()) + hash(self.E())
 
+	def __contains__(self,elt):
+		try:
+			(i,j) = elt
+			return (i,j) in self.edge_set
+
+		except TypeError:
+			return elt in self.vert_set
+
+	#Graph union
+	def __add__(self,other):
+		return graph_opp(G,H, Set.union)
+
+	#G & H
+	def __and__(self,other):
+		return graph_opp(G,H, Set.intersection)
+
+	#G - H
+	def __sub__(G,H):
+		return graph_opp(G,H, Set.discard)
+
+	# G ^ H, (G + H) - (G & H)
+	def __xor__(G,H):
+		return sub( add(G,H), intersection(G,H) )
+
+	def __invert__(G):
+
+		(V,E) = G
+
+		E = { Edge(u,v) for u in V for v in V if Edge(u,v) not in E and u != v }
+
+		return Graph(V,E)
+
+	#applies Set operation opp to both vertex and edge sets
+	#and returns the graph induced by these two new sets
+	def graph_opp(G,H,opp):
+		(V_G, E_G) = G
+		(V_H, E_H) = H
+
+		V = opp( V_G, V_H ) 
+		E = opp( E_G, E_H )
+
+		return Graph(V,E)
+
+
 	def V(self):
-		 return self.vert_set
+		return self.vert_set
 
 	def E(self):
 		return self.edge_set

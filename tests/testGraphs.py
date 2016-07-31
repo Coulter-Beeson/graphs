@@ -28,11 +28,19 @@ class TestGraph(unittest.TestCase):
 		#			 b
 		#			/ \
 		#		   /   \
-		#	G =	 a      d - - e
+		#	G =	 a      d - - - e
 		#		   \   /
 		#			\ /
 		#			 c
 		#
+		#				 b
+		#				/
+		#			   /
+		#	H = x - - a
+		#			   \
+		#				\
+		#				 c
+
 		
 		V = test_vertices()
 		E = test_edges()

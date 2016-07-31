@@ -108,6 +108,6 @@ class BooleanMatrix(object):
 
 	# complements of the Graph G
 	#O(n)
-	def complement(self):
+	def __invert__(self):
 		self.M =[ ~self.M[i] & (2**self.n - 1) for i in range(self.n) ]
 
